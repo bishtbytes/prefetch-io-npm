@@ -34,11 +34,11 @@ export const CookieBanner = ({ variant = "default", showOnScroll = true }: Cooki
     if (status === "accepted") incrementPageView();
   };
 
-  if (consent === null || consent !== "missing" || !isVisible) return null;
+  if (consent === null || consent !== "missing") return null; // Only hide if consent is resolved
 
   return (
     <>
-      <div className={`${bannerClass} visible`}>
+      <div className={`${bannerClass} ${isVisible ? "visible" : ""}`}>
         <p className="cookie-text">{variant === "lean" ? COOKIE_MESSAGE_LEAN : COOKIE_MESSAGE_DEFAULT}</p>
         <div className="cookie-buttons">
           <button onClick={() => updateConsent("rejected")} className="cookie-button reject">
@@ -61,7 +61,7 @@ export const CookieBanner = ({ variant = "default", showOnScroll = true }: Cooki
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
           z-index: 1111;
           opacity: 0;
-          transform: translateY(100px);
+          transform: translateY(20px); /* Smaller initial offset for subtler effect */
           transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
@@ -82,7 +82,7 @@ export const CookieBanner = ({ variant = "default", showOnScroll = true }: Cooki
           min-width: 800px;
           max-width: 900px;
           left: 50%;
-          transform: translateX(-50%);
+          transform: translateX(-50%) translateY(20px); /* Adjusted initial state */
           padding: 1rem 1.5rem;
           display: flex;
           align-items: center;
@@ -91,7 +91,7 @@ export const CookieBanner = ({ variant = "default", showOnScroll = true }: Cooki
         }
 
         .lean.visible {
-          transform: translateX(-50%) translateY(0);
+          transform: translateX(-50%) translateY(0); /* Combine both transforms */
         }
 
         .lean .cookie-text {
@@ -157,6 +157,7 @@ export const CookieBanner = ({ variant = "default", showOnScroll = true }: Cooki
             min-width: 0;
             padding: 1rem;
             flex-direction: column;
+            transform: translateY(20px); /* Reset for mobile */
           }
 
           .lean.visible {

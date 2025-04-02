@@ -1,0 +1,57 @@
+{
+  "name": "prefetch-io-npm",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bishtbytes/prefetch-io-npm.git"
+  },
+  "keywords": [
+    "prefetch",
+    "pageviews",
+    "analytics",
+    "tracking",
+    "typescript",
+    "javascript",
+    "react",
+    "nextjs",
+    "metrics",
+    "performance"
+  ],
+  "author": "Bisht Bytes <bishtbytes@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bishtbytes/prefetch-io-npm/issues"
+  },
+  "homepage": "https://github.com/bishtbytes/prefetch-io-npm#readme",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc --module CommonJS --outDir dist/cjs",
+    "build:esm": "tsc --module ESNext --outDir dist/esm",
+    "release": "npm run build && npm run test && npm publish --access public",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
+    "@types/jest": "^29.5.12",
+    "@types/react": "^18.3.4",
+    "@types/uslug": "^1.0.4",
+    "github-slugger": "^2.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.2.4",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "uslug": "^1.0.4"
+  }
+}

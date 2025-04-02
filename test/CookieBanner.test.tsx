@@ -20,55 +20,94 @@ describe("CookieBanner", () => {
   beforeEach(() => {
     incrementPageView = jest.fn();
     (usePageViewCounter as jest.Mock).mockReturnValue({ incrementPageView });
-
     jest.clearAllMocks();
   });
 
-  it("displays the banner when consent is missing", () => {
-    (getCookie as jest.Mock).mockReturnValue(null);
+  describe("default variant", () => {
+    it("displays the banner when consent is missing", () => {
+      (getCookie as jest.Mock).mockReturnValue(null);
 
-    render(<CookieBanner />);
+      render(<CookieBanner />);
 
-    expect(screen.getByText(/this website uses cookies/i)).toBeInTheDocument();
+      expect(screen.getByText(/this website uses cookies/i)).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /accept/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /reject/i })).toBeInTheDocument();
+    });
+
+    it("does not display the banner if consent is accepted", () => {
+      (getCookie as jest.Mock).mockReturnValue("accepted");
+
+      render(<CookieBanner />);
+
+      expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
+    });
+
+    it("does not display the banner if consent is rejected", () => {
+      (getCookie as jest.Mock).mockReturnValue("rejected");
+
+      render(<CookieBanner />);
+
+      expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
+    });
+
+    it("accepts cookies, sets consent, and increments page view", () => {
+      (getCookie as jest.Mock).mockReturnValue(null);
+
+      render(<CookieBanner />);
+
+      const acceptButton = screen.getByRole("button", { name: /accept/i });
+      fireEvent.click(acceptButton);
+
+      expect(setCookie).toHaveBeenCalledWith("cookie_consent", "accepted", 365);
+      expect(incrementPageView).toHaveBeenCalled();
+      expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
+    });
+
+    it("rejects cookies and sets consent", () => {
+      (getCookie as jest.Mock).mockReturnValue(null);
+
+      render(<CookieBanner />);
+
+      const rejectButton = screen.getByRole("button", { name: /reject/i });
+      fireEvent.click(rejectButton);
+
+      expect(setCookie).toHaveBeenCalledWith("cookie_consent", "rejected", 365);
+      expect(incrementPageView).not.toHaveBeenCalled();
+      expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
+    });
   });
 
-  it("does not display the banner if consent is accepted", () => {
-    (getCookie as jest.Mock).mockReturnValue("accepted");
+  describe("lean variant", () => {
+    it("displays the banner with lean message when consent is missing", () => {
+      (getCookie as jest.Mock).mockReturnValue(null);
 
-    render(<CookieBanner />);
+      render(<CookieBanner variant="lean" />);
 
-    expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
-  });
+      expect(screen.getByText(/this website uses cookies/i)).toBeInTheDocument();
+      expect(screen.getByText(/accept to allow cookies/i)).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /accept/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /reject/i })).toBeInTheDocument();
+    });
 
-  it("does not display the banner if consent is rejected", () => {
-    (getCookie as jest.Mock).mockReturnValue("rejected");
+    it("does not display the banner if consent is accepted", () => {
+      (getCookie as jest.Mock).mockReturnValue("accepted");
 
-    render(<CookieBanner />);
+      render(<CookieBanner variant="lean" />);
 
-    expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
-  });
+      expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
+    });
 
-  it("accepts cookies, sets consent, and increments page view", () => {
-    (getCookie as jest.Mock).mockReturnValue(null);
+    it("accepts cookies, sets consent, and increments page view", () => {
+      (getCookie as jest.Mock).mockReturnValue(null);
 
-    render(<CookieBanner />);
+      render(<CookieBanner variant="lean" />);
 
-    fireEvent.click(screen.getByText(/accept/i));
+      const acceptButton = screen.getByRole("button", { name: /accept/i });
+      fireEvent.click(acceptButton);
 
-    expect(setCookie).toHaveBeenCalledWith("cookie_consent", "accepted", 365);
-    expect(incrementPageView).toHaveBeenCalled();
-    expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
-  });
-
-  it("rejects cookies and sets consent", () => {
-    (getCookie as jest.Mock).mockReturnValue(null);
-
-    render(<CookieBanner />);
-
-    fireEvent.click(screen.getByText(/reject/i));
-
-    expect(setCookie).toHaveBeenCalledWith("cookie_consent", "rejected", 365);
-    expect(incrementPageView).not.toHaveBeenCalled();
-    expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
+      expect(setCookie).toHaveBeenCalledWith("cookie_consent", "accepted", 365);
+      expect(incrementPageView).toHaveBeenCalled();
+      expect(screen.queryByText(/this website uses cookies/i)).not.toBeInTheDocument();
+    });
   });
 });

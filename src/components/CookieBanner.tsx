@@ -1,8 +1,8 @@
 "use client";
 
-import { usePageViewCounter } from "@/hooks/usePageViewsCounter";
-import { getCookie, setCookie } from "@/utility";
 import React, { useEffect, useState } from "react";
+import { usePageViewCounter } from "../hooks/usePageViewsCounter";
+import { getCookie, setCookie } from "../utility";
 
 type ConsentStatus = "accepted" | "rejected" | "missing";
 

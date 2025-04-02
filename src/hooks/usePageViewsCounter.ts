@@ -1,7 +1,7 @@
 "use client";
 
-import { getCookie, setCookie } from "@/utility";
 import { useEffect, useState } from "react";
+import { getCookie, setCookie } from "../utility";
 
 // Token Storage Type
 type TokenStorage = {

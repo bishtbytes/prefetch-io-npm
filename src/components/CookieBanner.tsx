@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { usePageViewCounter } from "../hooks/usePageViewsCounter";
+import { useScrollVisibility } from "../hooks/useScrollVisibility";
 import { getCookie, setCookie } from "../utility";
 
 type ConsentStatus = "accepted" | "rejected" | "missing";
 type CookieBannerProps = {
   variant?: "default" | "lean";
+  showOnScroll?: boolean;
 };
 
 const COOKIE_MESSAGE_DEFAULT =
@@ -15,10 +17,11 @@ const COOKIE_MESSAGE_DEFAULT =
 const COOKIE_MESSAGE_LEAN =
   "This website uses cookies to enhance your experience. Accept to allow cookies or reject for limited functionality.";
 
-export const CookieBanner = ({ variant = "default" }: CookieBannerProps) => {
+export const CookieBanner = ({ variant = "default", showOnScroll = true }: CookieBannerProps) => {
   const bannerClass = `cookie-banner ${variant === "lean" ? "lean" : "default"}`;
   const { incrementPageView } = usePageViewCounter();
   const [consent, setConsent] = useState<ConsentStatus | null>(null);
+  const isVisible = useScrollVisibility(showOnScroll);
 
   useEffect(() => {
     const savedConsent = getCookie("cookie_consent") as ConsentStatus | null;
@@ -31,11 +34,11 @@ export const CookieBanner = ({ variant = "default" }: CookieBannerProps) => {
     if (status === "accepted") incrementPageView();
   };
 
-  if (consent === null || consent !== "missing") return null;
+  if (consent === null || consent !== "missing" || !isVisible) return null;
 
   return (
     <>
-      <div className={bannerClass}>
+      <div className={`${bannerClass} visible`}>
         <p className="cookie-text">{variant === "lean" ? COOKIE_MESSAGE_LEAN : COOKIE_MESSAGE_DEFAULT}</p>
         <div className="cookie-buttons">
           <button onClick={() => updateConsent("rejected")} className="cookie-button reject">
@@ -57,6 +60,14 @@ export const CookieBanner = ({ variant = "default" }: CookieBannerProps) => {
           border-radius: 12px;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
           z-index: 1111;
+          opacity: 0;
+          transform: translateY(100px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .cookie-banner.visible {
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .default {
@@ -77,6 +88,10 @@ export const CookieBanner = ({ variant = "default" }: CookieBannerProps) => {
           align-items: center;
           justify-content: space-between;
           border: 1px solid black;
+        }
+
+        .lean.visible {
+          transform: translateX(-50%) translateY(0);
         }
 
         .lean .cookie-text {
@@ -142,6 +157,10 @@ export const CookieBanner = ({ variant = "default" }: CookieBannerProps) => {
             min-width: 0;
             padding: 1rem;
             flex-direction: column;
+          }
+
+          .lean.visible {
+            transform: translateY(0);
           }
 
           .lean .cookie-text {

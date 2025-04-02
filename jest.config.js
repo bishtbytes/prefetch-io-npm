@@ -6,4 +6,7 @@ module.exports = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest", // Use ts-jest for .ts and .tsx files
   },
+  moduleNameMapper: {
+    "^@/(.+)": "<rootDir>/src/$1", // Maps @/src/utility to <project_root>/src/utility
+  },
 };

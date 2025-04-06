@@ -1,5 +1,4 @@
 export async function configurePageIds(validPageIds: string[]) {
-  // Check for required environment variables
   const requiredEnvVars = {
     PREFETCH_IO_URL: process.env.PREFETCH_IO_URL,
     CLIENT_ID: process.env.CLIENT_ID,
@@ -28,19 +27,21 @@ export async function configurePageIds(validPageIds: string[]) {
     validActionIds: ["pageviews"],
   };
 
-  fetch(endpoint, {
+  return fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      referer: process.env.SITE_ADDRESS || "", // SITE_ADDRESS is optional
+      referer: process.env.SITE_ADDRESS || "",
     },
     body: JSON.stringify(payload),
   })
     .then((response) => response.json())
     .then((data) => {
       console.log("Updated configuration:", data);
+      return data; // Optional: return data for further use
     })
     .catch((error) => {
       console.error("Error occurred:", error);
+      throw error; // Re-throw to propagate the error
     });
 }

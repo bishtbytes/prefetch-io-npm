@@ -23,8 +23,9 @@ describe("configurePageIds", () => {
 
     await configurePageIds(["page1", "page2"]);
 
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, JSON.stringify(["page1", "page2"], null, 2));
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, "Updated configuration:", mockResponse);
+    // Expect only one console.log call
+    expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, "Updated configuration:", mockResponse);
 
     expect(fetch).toHaveBeenCalledWith("https://example.com/api/v1/configure", {
       method: "POST",

@@ -13,7 +13,6 @@ export async function configurePageIds(validPageIds: string[]) {
     throw new Error(`Missing required environment variables: ${missingEnvVars.join(", ")}`);
   }
 
-  console.log(JSON.stringify(validPageIds, null, 2));
   const serverHost = process.env.PREFETCH_IO_URL;
   const endpoint = `${serverHost}/api/v1/configure`;
   const payload = {
